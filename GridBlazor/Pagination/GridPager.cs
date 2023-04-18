@@ -205,16 +205,35 @@ namespace GridBlazor.Pagination
             if (_currentPage > PageCount)
                 _currentPage = PageCount;
 
-            StartDisplayedPage = (_currentPage - MaxDisplayedPages/2) < 1 ? 1 : _currentPage - MaxDisplayedPages/2;
-            EndDisplayedPage = (_currentPage + MaxDisplayedPages/2) > PageCount
+            var targetStart = _currentPage - MaxDisplayedPages/2 < 1 ? 1 : _currentPage - MaxDisplayedPages/2;
+
+            var targetEnd = _currentPage + MaxDisplayedPages / 2;
+            if (targetStart == 1)
+            {
+                targetEnd = MaxDisplayedPages + 1;// 3 - StartDisplayedPage;
+            }
+            EndDisplayedPage = targetEnd > PageCount
                                    ? PageCount
-                                   : _currentPage + MaxDisplayedPages/2;
+                                   : targetEnd;
+
+            if (EndDisplayedPage == PageCount)
+            {
+                targetStart = EndDisplayedPage - MaxDisplayedPages;
+            }
+
+            StartDisplayedPage = targetStart < 1 ? 1 : targetStart;
+            
+            
         }
 
         #region View
 
         public int StartDisplayedPage { get; protected set; }
         public int EndDisplayedPage { get; protected set; }
+
+        public bool PrevNextAlwaysVisible { get; set; } = true;
+        public bool PrevEnabled => CurrentPage > 1;
+        public bool NextEnabled => CurrentPage < PageCount;
 
         public virtual string GetLinkForPage(int pageIndex)
         {

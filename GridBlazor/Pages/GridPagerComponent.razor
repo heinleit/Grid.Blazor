@@ -7,23 +7,20 @@
     {
         <nav class="grid-pager">
             <ul class="pagination">
-                @if (GridPager.CurrentPage > 1)
+                @if (GridPager.PrevEnabled || GridPager.PrevNextAlwaysVisible)
                 {
-                    <li class="page-item">
-                        <button type="button" class="page-link" @onclick="() => PagerButtonClicked(GridPager.CurrentPage - 1)">«</button>
+                    <li class="page-item @(GridPager.PrevEnabled ? "" : "disabled")">
+                        <button type="button" class="page-link" @onclick="() => PagerButtonClicked(GridPager.CurrentPage - 1)">
+                            &#10094;
+                        </button>
                     </li>
                 }
+                
                 @if (GridPager.StartDisplayedPage > 1)
                 {
                     <li class="page-item">
                         <button type="button" class="page-link" @onclick="() => PagerButtonClicked(1)">1</button>
                     </li>
-                    @if (GridPager.StartDisplayedPage > 2)
-                    {
-                        <li class="page-item">
-                            <button type="button" class="page-link" @onclick="() => PagerButtonClicked(GridPager.StartDisplayedPage - 1)">...</button>
-                        </li>
-                    }
                 }
                 @for (int i = GridPager.StartDisplayedPage; i <= GridPager.EndDisplayedPage; i++)
                 {
@@ -43,20 +40,17 @@
                 }
                 @if (GridPager.EndDisplayedPage < GridPager.PageCount)
                 {
-                    if (GridPager.EndDisplayedPage < GridPager.PageCount - 1)
-                    {
-                        <li class="page-item">
-                            <button type="button" class="page-link" @onclick="async () => await PagerButtonClicked(GridPager.EndDisplayedPage + 1)">...</button>
-                        </li>
-                    }
                     <li class="page-item">
                         <button type="button" class="page-link" @onclick="async () => await PagerButtonClicked(GridPager.PageCount)">@GridPager.PageCount</button>
                     </li>
                 }
-                @if (GridPager.CurrentPage < GridPager.PageCount)
+                
+                @if (GridPager.NextEnabled || GridPager.PrevNextAlwaysVisible)
                 {
-                    <li class="page-item">
-                        <button type="button" class="page-link" @onclick="async () => await PagerButtonClicked(GridPager.CurrentPage + 1)">»</button>
+                    <li class="page-item @(GridPager.NextEnabled ? "" : "disabled")">
+                        <button type="button" class="page-link" @onclick="async () => await PagerButtonClicked(GridPager.CurrentPage + 1)">
+                            &#10095;
+                        </button>
                     </li>
                 }
             </ul>

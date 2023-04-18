@@ -17,6 +17,7 @@ using GridShared.Utility;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -110,30 +111,7 @@ namespace GridCore
 
             var urlParameters = CustomQueryStringBuilder.Convert(query);
 
-            int page = 0;
-            int startIndex = 0;
-            int virtualizedCount = 0;
-
-            string startIndexParameter = urlParameters[GridPager.DefaultStartIndexQueryParameter];
-            string virtualizedCountParameter = urlParameters[GridPager.DefaultVirtualizedCountQueryParameter];
-            if (!string.IsNullOrEmpty(startIndexParameter) && !string.IsNullOrWhiteSpace(virtualizedCountParameter))
-            {
-                PagingType = PagingType.Virtualization;
-                int.TryParse(startIndexParameter, out startIndex);
-                int.TryParse(virtualizedCountParameter, out virtualizedCount);
-                ((GridPager)Pager).StartIndex = startIndex;
-                ((GridPager)Pager).VirtualizedCount = virtualizedCount;
-            }
-            else
-            {
-                PagingType = PagingType.None;
-                string pageParameter = urlParameters[((GridPager)Pager).ParameterName];
-                if (pageParameter != null)
-                    int.TryParse(pageParameter, out page);
-                if (page == 0)
-                    page++;
-                ((GridPager)Pager).CurrentPage = page;
-            }
+            ApplyGridParameters(urlParameters);
         }
 
         /// <summary>
@@ -425,6 +403,38 @@ namespace GridCore
 
         #endregion IGrid Members
 
+        
+        /// <summary>
+        ///     Applies URL parameters settings
+        /// </summary>
+        private void ApplyGridParameters(NameValueCollection urlParameters)
+        {
+            var page = 0;
+            var startIndex = 0;
+            var virtualizedCount = 0;
+
+            var startIndexParameter = urlParameters[GridPager.DefaultStartIndexQueryParameter];
+            var virtualizedCountParameter = urlParameters[GridPager.DefaultVirtualizedCountQueryParameter];
+            if (!string.IsNullOrEmpty(startIndexParameter) && !string.IsNullOrWhiteSpace(virtualizedCountParameter))
+            {
+                PagingType = PagingType.Virtualization;
+                int.TryParse(startIndexParameter, out startIndex);
+                int.TryParse(virtualizedCountParameter, out virtualizedCount);
+                ((GridPager)Pager).StartIndex = startIndex;
+                ((GridPager)Pager).VirtualizedCount = virtualizedCount;
+            }
+            else
+            {
+                PagingType = PagingType.None;
+                var pageParameter = urlParameters[((GridPager)Pager).ParameterName];
+                if (pageParameter != null)
+                    int.TryParse(pageParameter, out page);
+                if (page == 0)
+                    page++;
+                ((GridPager)Pager).CurrentPage = page;
+            }
+        }
+        
         /// <summary>
         ///     Applies data annotations settings
         /// </summary>
@@ -438,11 +448,6 @@ namespace GridCore
             {
                 if (opt.PageSize > 0)
                     Pager.PageSize = opt.PageSize;
-
-                if (opt.PagingMaxDisplayedPages > 0 && Pager is GridPager)
-                {
-                    (Pager as GridPager).MaxDisplayedPages = opt.PagingMaxDisplayedPages;
-                }
             }
         }
 

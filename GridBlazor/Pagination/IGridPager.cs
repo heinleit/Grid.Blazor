@@ -46,25 +46,10 @@ namespace GridBlazor.Pagination
         /// </summary>
         int VirtualizedCount { get; }
 
+        
         ///// <summary>
-        /////     Starting displaying page
+        /////     Show the Prev and Next buttons even if they are disabled.
         ///// </summary>
-        //int StartDisplayedPage { get; }
-
-        ///// <summary>
-        /////     Last displaying page
-        ///// </summary>
-        //int EndDisplayedPage { get; }
-
-        //int MaxDisplayedPages { get; set; }
-
-        //string ParameterName { get; }
-
-        ///// <summary>
-        /////     Получить адрес для конкретной страницы
-        ///// </summary>
-        ///// <param name="pageIndex">Номер страницы</param>
-        ///// <returns>Адрес страницы</returns>
-        //string GetLinkForPage(int pageIndex);
+        public bool PrevNextAlwaysVisible  { get; set; }
     }
 }
